@@ -1,0 +1,36 @@
+.site {
+    display: grid;
+    gap: 0.4em;
+    grid-template-columns: 1fr 2fr 2fr;
+    grid-template-rows: 1fr 1fr 8fr 1fr;
+    grid-template-areas: "title title title" "header header header" "sidebar main main" "footer footer footer";
+}
+
+.masthead {
+    background-color: grey;
+    grid-area: header;
+}
+
+.page-title {
+    background-color: #dbff69;
+    grid-area: title;
+}
+
+.main-content {
+    background-color: #7d6680;
+    grid-area: main;
+}
+
+.sidebar {
+    background-color: #929dff;
+    grid-area: sidebar;
+}
+
+.footer {
+    background-color: #51ff5d;
+    grid-area: footer;
+}
+
+.hidden {
+    display: none;
+}

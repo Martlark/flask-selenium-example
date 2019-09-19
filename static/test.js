@@ -25,10 +25,19 @@ class ViewModel {
         this.formElement = document.getElementById("form");
         this.addElement = document.getElementById("add");
         this.messageElement = document.getElementById("message");
+        this.deleteAllElement = document.getElementById("deleteAll");
         this.models = [];
         this.loadModels();
-        this.mode = 'view';
-        this.display();
+        this.setMode('view');
+    }
+
+    randomString(len=6, charSet = 'aaabcdeeeeefghiiijklmnooopqrstuuuvwxyz') {
+        let randomString = '';
+        for (let i = 0; i < len; i++) {
+            const randomPoz = Math.floor(Math.random() * charSet.length);
+            randomString += charSet.substring(randomPoz, randomPoz + 1);
+        }
+        return randomString;
     }
 
     deleteAll() {
@@ -39,8 +48,8 @@ class ViewModel {
         this.messageElement.innerText = `removed: ${removedCount}`
     }
 
-    setMode(value){
-        if( this.mode != value){
+    setMode(value) {
+        if (this.mode !== value) {
             this.mode = value;
             this.display();
         }
@@ -73,7 +82,7 @@ class ViewModel {
 
     loadModels() {
         for (let x = 0; x < 5; x++) {
-            this.models.push(new TestModel({first: `First ${x}`, last: `Last ${x}`, id: x}));
+            this.models.push(new TestModel({first: `F${this.randomString()}`, last: `L${this.randomString()}`, id: x}));
         }
     }
 
@@ -84,8 +93,8 @@ class ViewModel {
     }
 
     updateModel(ctx, index) {
-        const first = ctx.parentNode.querySelector("input[name=first]").value;
-        const last = ctx.parentNode.querySelector("input[name=last]").value;
+        const first = ctx.parentNode.querySelector("input.first").value;
+        const last = ctx.parentNode.querySelector("input.last").value;
         this.models[index].update(first, last);
         this.display();
     }
@@ -94,18 +103,16 @@ class ViewModel {
         const div = document.getElementById("content-list");
         div.innerHTML = "";
         this.models.forEach((element, index) => {
-            div.innerHTML += `<li id="li-node-${element.id}"><span>${element.fullName()}</span>
-<input name="first" value="${element.first}"> <input name="last" value="${element.last}">
-<button onclick="view.updateModel(this, ${index})">Update</button> 
-<button onclick="view.removeModel(${index})">Remove</button> 
+            div.innerHTML += `<li id="li-node-${element.id}" data-id="${element.id}"><span>${element.fullName()}</span>
+<input class="first" value="${element.first}"> <input class="last" value="${element.last}">
+<button class="update" onclick="view.updateModel(this, ${index})">Update</button> 
+<button class="remove" onclick="view.removeModel(${index})">Remove</button> 
 </li>`;
         });
-        const deleteAllButton = document.getElementById("deleteAll");
-
         if (this.models.length > 0) {
-            deleteAllButton.classList.remove("hidden");
+            this.deleteAllElement.classList.remove("hidden");
         } else {
-            deleteAllButton.classList.add("hidden");
+            this.deleteAllElement.classList.add("hidden");
         }
         switch (this.mode) {
             case'add':

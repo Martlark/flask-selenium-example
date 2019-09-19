@@ -59,14 +59,21 @@ class SeleniumTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def set_text(self, item_id: str, text: str = ''):
+    def set_text(self, item_id: str, text: str = '', parent=None):
         """
         clear and set the input element identified by the item_id
 
-        :param item_id: id of item to set text
+        :param item_id: id of item to set text or css selector
         :param text:
+        :param parent: {Object} parent dom object
         """
-        input = self.driver.find_element_by_id(item_id)
+        if not parent:
+            parent = self.driver
+        try:
+            input = parent.find_element_by_id(item_id)
+        except:
+            input = parent.find_element_by_css_selector(item_id)
+
         input.clear()
         input.send_keys(text)
 
@@ -118,9 +125,21 @@ class PageIndex(SeleniumTest):
         self.assertTrue(self.driver.find_elements_by_tag_name('header'))
         li_node = self.driver.find_element_by_id(f'li-node-{node_id}')
         self.assertTrue(li_node)
-        button = li_node.find_elements_by_tag_name('button')[1]
+        button = li_node.find_element_by_css_selector('button.remove')
         button.click()
         self.assertMessage(f'removed: {node_id}', )
+
+    def test_remove_all_items(self):
+        self.driver.get(f'{host_name}/')
+        ul = self.driver.find_element_by_id('content-list')
+        item_ids = [(item.get_attribute('id'), item.get_attribute('data-id')) for item in
+                    ul.find_elements_by_tag_name('li')]
+        for item_id, model_id in item_ids:
+            button = self.driver.find_element_by_id(item_id).find_element_by_css_selector('button.remove')
+            button.click()
+            self.assertMessage(f'removed: {model_id}')
+        self.assertDisplayed('add')
+        self.assertHidden('deleteAll')
 
     def test_update_item(self):
         self.driver.get(f'{host_name}/')
@@ -130,13 +149,9 @@ class PageIndex(SeleniumTest):
         self.assertTrue(li_node)
         new_first = self.random_string()
         new_last = self.random_string()
-        first = li_node.find_element_by_css_selector('input[name=first]')
-        last = li_node.find_element_by_css_selector('input[name=last]')
-        first.clear()
-        first.send_keys(new_first)
-        last.clear()
-        last.send_keys(new_last)
-        button = li_node.find_elements_by_tag_name('button')[0]
+        self.set_text('input.first', new_first, li_node)
+        self.set_text('input.last', new_last, li_node)
+        button = li_node.find_element_by_css_selector('button.update')
         button.click()
         li_node = self.driver.find_element_by_id(f'li-node-{node_id}')
         li_text = li_node.find_elements_by_tag_name('span')[0]

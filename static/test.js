@@ -31,13 +31,17 @@ class ViewModel {
         this.setMode('view');
     }
 
-    randomString(len=6, charSet = 'aaabcdeeeeefghiiijklmnooopqrstuuuvwxyz') {
-        let randomString = '';
-        for (let i = 0; i < len; i++) {
-            const randomPoz = Math.floor(Math.random() * charSet.length);
-            randomString += charSet.substring(randomPoz, randomPoz + 1);
+    randomWord(syllable = 6) {
+        let newWord = '';
+        const vowels = 'aeiou';
+        const consonants = 'bcdfghjklmnpqrstvwyz';
+        for (let i = 0; i < syllable; i++) {
+            let randomPoz = Math.floor(Math.random() * vowels.length);
+            newWord += vowels.substring(randomPoz, randomPoz + 1);
+            randomPoz = Math.floor(Math.random() * vowels.length);
+            newWord += consonants.substring(randomPoz, randomPoz + 1);
         }
-        return randomString;
+        return newWord;
     }
 
     deleteAll() {
@@ -82,7 +86,7 @@ class ViewModel {
 
     loadModels() {
         for (let x = 0; x < 5; x++) {
-            this.models.push(new TestModel({first: `F${this.randomString()}`, last: `L${this.randomString()}`, id: x}));
+            this.models.push(new TestModel({first: `F${this.randomWord()}`, last: `L${this.randomWord()}`, id: x}));
         }
     }
 

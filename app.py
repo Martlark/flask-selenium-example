@@ -1,8 +1,9 @@
 import time
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
+refresh_count = 0
 
 
 @app.route('/shutdown')
@@ -16,9 +17,12 @@ def testing_shutdown():
     return 'not testing'
 
 
-@app.route('/grid')
+@app.route('/auto_refresh')
 def public_test():
-    return render_template("grid.html", title="Auto Refresh Grid Example", time_seconds=int(time.time()))
+    global refresh_count
+    refresh_count += 1
+    return render_template("auto_refresh.html", title="Auto Refresh Grid Example", refresh_count=refresh_count,
+                           time_seconds=int(time.time()))
 
 
 @app.route('/')

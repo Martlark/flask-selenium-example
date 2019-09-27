@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block header %}
-    <script src="/static/index.js"></script>
+    <script src="/static/autoRefresh.js"></script>
     <title>https://www.youtube.com/watch?v=7kVeCqQCxlk</title>
 {% endblock %}
 {% block content %}
+    <h3>Refreshed {{ refresh_count }} Times</h3>
     <label>Page Title (pause)<input type="checkbox" id="pause"></label>
 {% endblock %}

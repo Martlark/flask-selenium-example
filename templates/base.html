@@ -18,17 +18,23 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="/static/grid.css">
     <header>
-    {% block header %}{% endblock %}
-  </header>
+        {% block header %}{% endblock %}
+    </header>
 </head>
 <body>
 <div class="site">
     <header class="masthead" id="message"></header>
-    <h1 class="page-title">{{title}}</h1>
+    <h1 class="page-title">{{ title }}</h1>
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
-    <aside class="sidebar"> sidebar {{ time_seconds }}</aside>
+    <aside class="sidebar">
+        <h3>Time:{{ time_seconds }}</h3>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/auto_refresh">Auto Refresh</a></li>
+        </ul>
+    </aside>
     <footer class="footer"> footer</footer>
 </div>
 </body>

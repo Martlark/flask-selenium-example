@@ -18,12 +18,12 @@ def testing_shutdown():
 
 @app.route('/grid')
 def public_test():
-    return render_template("grid.html", time_seconds=int(time.time()))
+    return render_template("grid.html", title="Auto Refresh Grid Example", time_seconds=int(time.time()))
 
 
 @app.route('/')
 def public_index():
-    return render_template("index.html", time_seconds=int(time.time()))
+    return render_template("index.html", title="Home Page", time_seconds=int(time.time()))
 
 
 if __name__ == '__main__':

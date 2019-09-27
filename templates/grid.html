@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends 'base.html' %}
+{% block header %}
     <script src="/static/index.js"></script>
     <title>https://www.youtube.com/watch?v=7kVeCqQCxlk</title>
-    <link rel="stylesheet" type="text/css" href="/static/grid.css">
-</head>
-<body>
-<div class="site">
-	<header class="masthead"> Masthead</header>
-    <h1 class="page-title"><label>Page Title (pause)<input type="checkbox" id="pause"></label></h1>
-    <main class="main-content">main content</main>
-    <aside class="sidebar"> sidebar {{ time_seconds }}</aside>
-    <footer class="footer"> footer</footer>
-</div>
-</body>
-</html>
+{% endblock %}
+{% block content %}
+    <label>Page Title (pause)<input type="checkbox" id="pause"></label>
+{% endblock %}

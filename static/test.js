@@ -79,7 +79,18 @@ class ViewModel {
             this.messageElement.innerText = "last name required";
             return;
         }
-        this.models.push(new TestModel({first: new_first, last: new_last, id: id}));
+        const newModel = new TestModel({first: new_first, last: new_last, id: id});
+        const sameNameFound = this.models.some(item => {
+            if (item.fullName() === newModel.fullName()) {
+                this.messageElement.innerText = `duplicate name not allowed`;
+                return true;
+            }
+        });
+        if (sameNameFound) {
+            return;
+        }
+
+        this.models.push(newModel);
         this.messageElement.innerText = `added`;
         this.setMode('view');
     }
@@ -107,8 +118,8 @@ class ViewModel {
         const div = document.getElementById("content-list");
         div.innerHTML = "";
         this.models.forEach((element, index) => {
-            div.innerHTML += `<li id="li-node-${element.id}" data-id="${element.id}"><span>${element.fullName()}</span>
-<input class="first" value="${element.first}"> <input class="last" value="${element.last}">
+            div.innerHTML += `<li id="li-node-${element.id}" data-id="${element.id}"><label for="input-${element.id}">${element.fullName()}</label>
+<input id="input-${element.id}" class="first" value="${element.first}"> <input class="last" value="${element.last}">
 <button class="update" onclick="view.updateModel(this, ${index})">Update</button> 
 <button class="remove" onclick="view.removeModel(${index})">Remove</button> 
 </li>`;

@@ -8,6 +8,7 @@ import unittest
 from selenium import webdriver
 from app import app
 
+# see: https://blog.miguelgrinberg.com/post/using-headless-chrome-with-selenium
 # configuration
 # https://www.kenst.com/2019/02/installing-chromedriver-on-windows/
 os.environ['PATH'] += os.pathsep + r'C:\ProgramData\chocolatey\lib\chromedriver\tools'
@@ -70,12 +71,12 @@ class SeleniumTest(unittest.TestCase):
         if not parent:
             parent = self.driver
         try:
-            input = parent.find_element_by_id(item_id)
+            input_element = parent.find_element_by_id(item_id)
         except:
-            input = parent.find_element_by_css_selector(item_id)
+            input_element = parent.find_element_by_css_selector(item_id)
 
-        input.clear()
-        input.send_keys(text)
+        input_element.clear()
+        input_element.send_keys(text)
 
     def assertDisplayed(self, item: object):
         """
@@ -117,7 +118,14 @@ class PageIndex(SeleniumTest):
         main_content = self.driver.find_element_by_id('content-list')
         self.assertTrue(main_content)
         items = main_content.find_elements_by_tag_name('li')
-        self.assertEqual(len(items), 5)
+        self.assertEqual(len(items), self.initial_list_count)
+        labels = main_content.find_elements_by_tag_name('li label')
+        self.assertEqual(len(labels), self.initial_list_count)
+        for label in labels:
+            label_for = label.get_attribute("for")
+            self.assertTrue(label_for)
+            input_element = main_content.find_element_by_id(label_for)
+            self.assertEqual(input_element.get_attribute('id'), label_for)
 
     def test_remove_item(self):
         self.driver.get(f'{host_name}/')
@@ -154,7 +162,7 @@ class PageIndex(SeleniumTest):
         button = li_node.find_element_by_css_selector('button.update')
         button.click()
         li_node = self.driver.find_element_by_id(f'li-node-{node_id}')
-        li_text = li_node.find_elements_by_tag_name('span')[0]
+        li_text = li_node.find_elements_by_tag_name('label')[0]
         self.assertEqual(li_text.text, f'{new_first} {new_last}')
         self.assertMessage(f'updated: {node_id}')
 
@@ -175,7 +183,6 @@ class PageIndex(SeleniumTest):
 
     def test_delete_all_add(self):
         self.driver.get(f'{host_name}/')
-        ul = self.driver.find_element_by_id('content-list')
         button = self.driver.find_element_by_id(f'deleteAll')
         button.click()
         self.assertFalse(button.is_displayed())
@@ -215,7 +222,7 @@ class PageIndex(SeleniumTest):
         self.assertMessage(f'added')
         self.assertHidden('form')
         self.assertDisplayed('add')
-        li_last = ul.find_element_by_css_selector('li:last-child span')
+        li_last = ul.find_element_by_css_selector('li:last-child label')
         self.assertEqual(f'{first} {last}', li_last.text)
 
     def test_add_cancel(self):
@@ -232,6 +239,32 @@ class PageIndex(SeleniumTest):
         li_list = ul.find_elements_by_tag_name('li')
         self.assertEqual(len(li_list), li_count)
         self.assertHidden('form')
+
+
+    def test_add_not_same(self):
+        self.driver.get(f'{host_name}/')
+
+        duplicate_first_name =self.random_string()
+        duplicate_last_name =self.random_string()
+        self.driver.find_element_by_id(f'add').click()
+        self.set_text(f'new_first', duplicate_first_name)
+        self.set_text(f'new_last', duplicate_last_name)
+        submit = self.driver.find_element_by_id(f'submit')
+        submit.click()
+        self.assertMessage(f'added')
+        self.driver.find_element_by_id(f'add').click()
+        self.set_text(f'new_first', duplicate_first_name)
+        self.set_text(f'new_last', duplicate_last_name)
+        submit = self.driver.find_element_by_id(f'submit')
+        submit.click()
+        self.assertMessage(f'duplicate name not allowed')
+
+class PageAbout(SeleniumTest):
+    def test_get(self):
+        self.driver.get(f'{host_name}/about')
+        self.assertEqual(
+            self.driver.title,
+            'Selenium Test Example')
 
 
 if __name__ == '__main__':

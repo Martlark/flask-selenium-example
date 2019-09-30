@@ -25,6 +25,11 @@ def public_test():
                            time_seconds=int(time.time()))
 
 
+@app.route('/about')
+def public_about():
+    return render_template("about.html", title="Selenium Test Example")
+
+
 @app.route('/')
 def public_index():
     return render_template("index.html", title="Home Page", time_seconds=int(time.time()))

@@ -21,6 +21,10 @@
     grid-area: main;
 }
 
+.main-content label {
+    width: 20em;
+}
+
 .sidebar {
     background-color: #929dff;
     grid-area: sidebar;
